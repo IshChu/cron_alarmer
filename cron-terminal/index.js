@@ -5,7 +5,13 @@ console.log(`Using cron string of ${argv.cron}`);
 
 const CronJob = require('cron').CronJob;
 const sound = require("sound-play");
-const notifier = require('node-notifier');
+//const notifier = require('node-notifier');
+const WindowsToaster = require('node-notifier').WindowsToaster;
+
+var notifier = new WindowsToaster({
+  withFallback: false, // Try Windows Toast and Growl first?
+  customPath: undefined // Relative/Absolute path if you want to use your fork of notifu
+});
 
 const path = require("path");
 const filePath = path.join(__dirname, "alarm.mp3");
@@ -16,9 +22,9 @@ let job = new CronJob(argv.cron, () => {
 	  message:'It\'s TIME',
 	  icon: path.join(__dirname, 'toast.png'),
 	  sound: false,
-	  wait: false
-	  });
+  });
   sound.play(filePath);
 }, null, true, 'America/New_York');
-
-job.start();
+notifier.on('click', function (notifierObject, options, event) {
+  console.log('closed')
+});
